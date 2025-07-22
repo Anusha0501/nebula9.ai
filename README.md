@@ -1,16 +1,4 @@
-Your name **Anusha** appears in the list as:
 
-> **170**  |  **220C2030263**  |  **Anusha**  |  **Machine Learning Engineer**  |  **Assignment number: 8**
-
-### 🔍 Your Assignment Details:
-
-* **Job Role:** Machine Learning / Generative AI Engineer
-* **Assignment Number:** 8
-* **Assignment Title:** **The Conversational Time Machine**
-
----
-
-### 🧠 What You Need to Build:
 
 An interactive, voice-based AI that lets users chat with a historical figure.
 
