@@ -18,6 +18,20 @@ An interactive chatbot that brings a historical figure to life using:
 
 ---
 
+### 🤖 Why This Is a Real-World Problem
+
+* Museums could use it to **educate visitors interactively**.
+* Schools could use it for **history lessons with AI-driven tutors**.
+* Content creators could simulate **“interviews” with historical figures**.
+* It combines the real challenges of:
+
+  * **AI alignment (staying in-character)**
+  * **Data retrieval (RAG)**
+  * **Voice tech (TTS or voice cloning)**
+  * **UI/UX design for natural conversation**
+
+---
+
 ## 🎯 Focus of the Project
 
 This project focuses **only on the early life of Queen Elizabeth II** (from birth in 1926 to her coronation in 1953), offering:
