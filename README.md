@@ -35,8 +35,6 @@ This project focuses **only** on the early life of Queen Elizabeth II, including
 - Her father's death and becoming heir presumptive
 - Her coronation in 1953
 
-It avoids post-1953 knowledge entirely to maintain historical accuracy.
-
 <img width="715" height="665" alt="Screenshot 2025-07-25 at 19 29 05" src="https://github.com/user-attachments/assets/bcf061d2-92bf-4166-b9f9-b689e3b35554" />
 
 ---
