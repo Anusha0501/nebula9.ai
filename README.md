@@ -1,5 +1,5 @@
 
-# 👑 Conversational Time Machine – Queen Elizabeth II (1926–1953)
+# 👑 Conversational Time Machine – Queen Elizabeth II 
 
 _“I declare before you all that my whole life shall be devoted to your service…”_
 
