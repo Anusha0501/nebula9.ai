@@ -1,136 +1,122 @@
 
 # 👑 Conversational Time Machine – Queen Elizabeth II (1926–1953)
 
-_“I declare before you all that my whole life shall be devoted to your service…”_  
-A voice-based AI experience that lets you have a natural, historically grounded conversation with **Queen Elizabeth II**, focused on her life until her coronation in **1953**.
+_“I declare before you all that my whole life shall be devoted to your service…”_
+
+A voice-driven, AI-powered interface that allows you to have natural, historically grounded conversations with **Queen Elizabeth II**, focused on her early life (from birth in 1926 up to her coronation in 1953).
 
 ![images (3)](https://github.com/user-attachments/assets/9b4dc264-1f9e-4739-af30-dbe796ac68a7)
 
 ---
 
-## 🧠 What is This?
+## 🎬 Inspiration
+
+After watching *The Crown* and witnessing the quiet strength and leadership of Queen Elizabeth II, I was moved to build a project that captures her voice, her memory, and her legacy in a respectful and engaging way. As a history enthusiast and AI developer, I saw the potential for blending **LLMs**, **retrieval-based learning**, and **text-to-speech** to make history feel personal and alive.
+
+---
+
+## 🧠 What Is This?
 
 An interactive chatbot that brings a historical figure to life using:
-- 📚 **RAG (Retrieval-Augmented Generation)** from real speeches, letters & wiki
-- 🤖 **Gemini Pro 1.5 Flash** for context-aware, time-bounded LLM responses
-- 🗣️ **Google Cloud TTS** for voice cloning (British female voice)
-- 🧱 **Streamlit UI** for real-time interaction with voice output
+
+- 📚 **RAG (Retrieval-Augmented Generation)** over real speeches, public letters & Wiki archives
+- 🤖 **Gemini Pro 1.5 Flash** for context-aware, time-constrained LLM generation
+- 🗣️ **Coqui TTS (Open Source)** for rich voice synthesis (British female voice)
+- 💻 **Streamlit** frontend for real-time chat with voice output
 
 ---
 
-### 🤖 Why This Is a Real-World Problem
+## 🎯 Project Scope
 
-* Museums could use it to **educate visitors interactively**.
-* Schools could use it for **history lessons with AI-driven tutors**.
-* Content creators could simulate **“interviews” with historical figures**.
-* It combines the real challenges of:
+This project focuses **only** on the early life of Queen Elizabeth II, including:
 
-  * **AI alignment (staying in-character)**
-  * **Data retrieval (RAG)**
-  * **Voice tech (TTS or voice cloning)**
-  * **UI/UX design for natural conversation**
+- Her childhood and royal upbringing
+- Experiences during WWII
+- Her father's death and becoming heir presumptive
+- Her coronation in 1953
 
----
-
-## 🎯 Focus of the Project
-
-This project focuses **only on the early life of Queen Elizabeth II** (from birth in 1926 to her coronation in 1953), offering:
-- Historical context
-- Personalized tone and voice
-- Filtered knowledge (no modern or post-1953 events)
+It avoids post-1953 knowledge entirely to maintain historical accuracy.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Component            | Tool / API Used                      |
-|---------------------|--------------------------------------|
-| Language Model       | Gemini Pro 1.5 Flash (Google AI)     |
-| Retrieval (RAG)      | ChromaDB + SentenceTransformers      |
-| Prompting Engine     | LangChain                            |
-| Voice Synthesis      | Google Cloud TTS (en-GB-Wavenet-C)   |
-| UI Framework         | Streamlit                            |
-| Deployment           | Streamlit Cloud                      |
+| Component         | Tool / API                        |
+|------------------|-----------------------------------|
+| Language Model    | Gemini Pro 1.5 Flash (Google AI)  |
+| Retrieval         | ChromaDB + SentenceTransformers   |
+| Prompting Engine  | LangChain                         |
+| Voice Synthesis   | Coqui TTS (en speaker)            |
+| Frontend UI       | Streamlit                         |
+| Deployment        | Streamlit Cloud                   |
 
 ---
 
-## 💻 How to Run Locally
+## 🚀 How to Run Locally
 
 ```bash
-# 1. Clone the repo
+# 1. Clone the repository
 git clone https://github.com/Anusha0501/nebula9.ai.git
 cd nebula9.ai
 
-# 2. Install dependencies
+# 2. Create a virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 3. Add your API keys
+# 4. Add your API keys (Gemini)
 cp .env.example .env
-# Then edit .env to include your Google + Gemini API keys
+# Then edit .env and fill in your Gemini API key
 
-# 4. Run the Streamlit app
-streamlit run streamlit_app.py
-````
+# 5. Run the app
+streamlit run app.py
+```
 
----
 
 ## 🗃️ Project Structure
 
 ```bash
-├── data/                    # Historical text (lilibet.txt)
+nebula9ai/
+├── data/                    # Historical text (e.g., speeches, letters)
 ├── embeddings/              # Chroma vector store
-├── rag_pipeline.py          # Semantic search over historical content
 ├── prompting.py             # Persona + context-based prompting logic
-├── tts.py                   # Text-to-Speech (voice synthesis)
-├── streamlit_app.py         # Main Streamlit frontend
+├── rag_pipeline.py          # RAG retrieval pipeline
+├── tts.py                   # Coqui TTS logic
+├── app.py                   # Main Streamlit interface
 ├── requirements.txt
-└── .env.example             # API keys (Gemini, Google TTS)
+└── .env.example             # Gemini API keys (no Google TTS required)
 ```
-
-          ┌──────────────┐
-          │ Text Corpus  │ ← Cleaned: speeches, wiki, letters
-          └─────┬────────┘
-                ↓
-     ┌────────────────────┐
-     │ Chunking & Embedding│ ← SentenceTransformers (MiniLM / BGE)
-     └─────┬──────────────┘
-           ↓
-     ┌─────────────────┐
-     │ Vector DB Store │ ← ChromaDB / FAISS / Weaviate
-     └─────┬───────────┘
-           ↓
-  ┌────────────────────────┐
-  │ User Question Encoding │ ← Same embedding model
-  └─────┬──────────────────┘
-        ↓
-  ┌────────────────────────────┐
-  │ Retrieve Top-k Documents   │ ← Semantic match
-  └─────┬──────────────────────┘
-        ↓
-  ┌──────────────────────────────┐
-  │ Pass docs + prompt to Gemini │ ← For response generation
-  └──────────────────────────────┘
-
 
 ---
 
 ## 🧪 Sample Prompts You Can Ask
 
 > 💬 “What was your role during the Second World War?”
-> 💬 “How did you feel when your father became King?”
-> 💬 “Tell me about your coronation day.”
+> 💬 “How did your father’s death affect your life?”
+> 💬 “What did you feel on coronation day?”
 > 💬 “What was your relationship with Winston Churchill like?”
 
-⛔ Questions like “What do you think of Prince Harry?” will be rejected with polite, time-accurate responses.
+⛔ Questions like “What do you think of Prince Harry?” will be politely declined with time-accurate messaging.
 
 ---
 
 ## ✨ Features
 
-* 🧠 **Time-Constrained LLM** → No post-1953 knowledge
-* 🧬 **RAG Context Injection** → Real historical sources only
-* 🔊 **Voice Response Output** → Text-to-speech with British accent
-* 🖼️ **Elegant UI** → Clean Streamlit layout with timeline awareness
-* 🧠 **Assumption Handling** → Simulates the Queen’s memory & style
+✅ **Time-Constrained LLM** — Response limited to pre-1953 history
+✅ **Context-Rich Responses** — RAG over historical texts and speeches
+✅ **Voice Responses** — Realistic British voice via Coqui TTS
+✅ **Elegant Streamlit UI** — Timeline-aware, minimalist design
+✅ **Open Source Friendly** — Fully local voice synthesis
+
+---
+
+## 🏛️ Real-World Use Cases
+
+* 🎓 **Education**: Bring historical figures into classrooms
+* 🏛️ **Museums**: Create interactive AI-powered exhibits
+* 🎙️ **Media & Creators**: Generate character interviews or period storytelling
+* 💡 **Research**: Explore persona-grounded LLM alignment challenges
 
 
