@@ -1,11 +1,10 @@
-# requirements.txt
-
 streamlit
 langchain
 chromadb
 sentence-transformers
+TTS  # coqui-tts
+pydub
+bs4
+requests
 google-generativeai
 python-dotenv
-coqui-tts
-pydub
-soundfile
