@@ -9,3 +9,4 @@ __pycache__/
 # 📦 App files
 chroma_db/
 audio/
+.DS_Store

@@ -1,9 +1,17 @@
-from elevenlabs import generate, save, set_api_key
+# tts.py
+
+from TTS.api import TTS
 import os
+from pydub import AudioSegment
+from pydub.playback import play
 
-set_api_key(os.getenv("ELEVEN_API_KEY"))
+# 🔊 Load default English TTS model
+tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=False)
 
-def speak(text, voice="Rachel", filename="output.mp3"):
-    audio = generate(text=text, voice=voice, model="eleven_monolingual_v1")
-    save(audio, filename)
-    return filename
+def speak_text(text):
+    output_path = "audio/response.wav"
+    tts.tts_to_file(text=text, file_path=output_path)
+
+    # Play audio
+    audio = AudioSegment.from_wav(output_path)
+    play(audio)

@@ -1,29 +1,53 @@
- 
+# app.py
+
 import os
+import streamlit as st
 from dotenv import load_dotenv
+from tts import speak_text
+from rag_pipeline import setup_vectorstore, query_db
+import google.generativeai as genai
 
-api_key = os.getenv("GEMINI_API_KEY")
-eleven_api_key = os.getenv("ELEVEN_API_KEY")
+# 🔐 Load API keys from .env
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-print("OpenAI key loaded:", bool(openai_api_key))  # should print True if it's working
+# 🎯 Initialize LLM (Gemini Pro 1.5 Flash)
+model = genai.GenerativeModel("gemini-pro")
 
-import gradio as gr
-from rag_pipeline import get_rag_pipeline
-from tts import speak
+# 🧠 Setup RAG vectorstore
+vectorstore = setup_vectorstore()
 
-qa = get_rag_pipeline()
+# 🗣️ App UI
+st.set_page_config(page_title="Elizabeth Time Machine", page_icon="🕰️")
+st.title("👸🏼 Elizabeth Time Machine")
+st.caption("Travel back in time to talk with Queen Elizabeth I (via AI)")
 
-def ask_figure(question):
-    response = qa.run(question)
-    audio_file = speak(response)
-    return response, audio_file
+# 🎤 User input
+query = st.text_input("Ask Elizabeth a question", placeholder="What was your childhood like?")
 
-iface = gr.Interface(
-    fn=ask_figure,
-    inputs=gr.Textbox(label="Ask a historical figure..."),
-    outputs=[gr.Textbox(label="Response"), gr.Audio(label="Voice")],
-    title="🕰 Conversational Time Machine",
-    description="Chat with a historical figure using LLM + RAG + TTS"
-)
+if st.button("Ask"):
+    if query.strip() == "":
+        st.warning("Please enter a question.")
+    else:
+        with st.spinner("Thinking like a Queen..."):
+            # RAG step
+            context = query_db(query, vectorstore)
 
-iface.launch()
+            # Prompt
+            prompt = f"""
+You are Queen Elizabeth I speaking to a curious visitor from the future.
+Respond in a regal, poetic tone using this context when needed:
+
+Context:
+{context}
+
+User Question:
+{query}
+"""
+            # Generate LLM response
+            response = model.generate_content(prompt)
+            answer = response.text.strip()
+
+            # 🎤 Show + Speak answer
+            st.markdown(f"**Elizabeth:** {answer}")
+            speak_text(answer)
