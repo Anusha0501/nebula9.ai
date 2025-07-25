@@ -1,19 +1,11 @@
-# LLM + RAG
-openai>=1.0.0
-langchain>=0.1.15
-faiss-cpu
+# requirements.txt
+
+streamlit
+langchain
+chromadb
 sentence-transformers
-tiktoken
-wikipedia
-
-# UI
-gradio>=4.0
-
-# TTS (choose one below based on your setup)
-elevenlabs>=0.2.26
-
-# Optional for dotenv support
+google-generativeai
 python-dotenv
-
-# General utilities
-requests
+coqui-tts
+pydub
+soundfile

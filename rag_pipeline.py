@@ -1,32 +1,34 @@
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import TextLoader
-from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatOpenAI
-import os
+# rag_pipeline.py
 
-def create_vector_db(file_path: str, persist_path="faiss_index"):
-    loader = TextLoader(file_path)
+import os
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.document_loaders import TextLoader
+from langchain.schema import Document
+
+CHROMA_PATH = "chroma_db"
+DATA_PATH = "data/figure.txt"  # 📁 Place biography/context file here
+
+# 🔍 Setup vectorstore from data file
+def setup_vectorstore():
+    # Load data
+    loader = TextLoader(DATA_PATH)
     documents = loader.load()
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = splitter.split_documents(documents)
+    # Split into chunks
+    splitter = CharacterTextSplitter(chunk_size=800, chunk_overlap=100)
+    docs = splitter.split_documents(documents)
 
-    embeddings = OpenAIEmbeddings()
-    vectorstore = FAISS.from_documents(chunks, embeddings)
-    vectorstore.save_local(persist_path)
+    # Embeddings
+    embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-def get_rag_pipeline(persist_path="faiss_index"):
-    embeddings = OpenAIEmbeddings()
-    vectorstore = FAISS.load_local(persist_path, embeddings)
-    
-    retriever = vectorstore.as_retriever()
-    llm = ChatOpenAI(temperature=0.2, model_name="gpt-3.5-turbo")
-    
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        retriever=retriever,
-        return_source_documents=False
-    )
-    return qa_chain
+    # Save to ChromaDB
+    vectorstore = Chroma.from_documents(documents=docs, embedding=embedding, persist_directory=CHROMA_PATH)
+    vectorstore.persist()
+    return vectorstore
+
+# 🔎 Query vectorstore for relevant context
+def query_db(query, vectorstore, k=3):
+    docs = vectorstore.similarity_search(query, k=k)
+    return "\n\n".join([doc.page_content for doc in docs])
