@@ -1,6 +1,6 @@
 import gradio as gr
 from rag_pipeline import get_rag_pipeline
-from voice import speak
+from tts import speak
 
 qa = get_rag_pipeline()
 
