@@ -1,3 +1,12 @@
+ 
+import os
+from dotenv import load_dotenv
+
+api_key = os.getenv("GEMINI_API_KEY")
+eleven_api_key = os.getenv("ELEVEN_API_KEY")
+
+print("OpenAI key loaded:", bool(openai_api_key))  # should print True if it's working
+
 import gradio as gr
 from rag_pipeline import get_rag_pipeline
 from tts import speak
