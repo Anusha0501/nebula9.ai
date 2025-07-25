@@ -1,0 +1,11 @@
+# 🔒 Sensitive files
+.env
+*.key
+
+# 🧪 Python junk
+__pycache__/
+*.pyc
+
+# 📦 App files
+chroma_db/
+audio/
