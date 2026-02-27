@@ -1,14 +1,17 @@
+from pathlib import Path
+from typing import Optional
+
 from TTS.api import TTS
-from pydub import AudioSegment
-from pydub.playback import play
-import os
 
-# ✅ Use English model with a clear voice
-tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=False)
+AUDIO_DIR = Path("audio")
+AUDIO_DIR.mkdir(exist_ok=True)
 
-def speak_text(text):
-    os.makedirs("audio", exist_ok=True)
-    output_path = "audio/response.wav"
-    tts.tts_to_file(text=text, file_path=output_path)
-    audio = AudioSegment.from_wav(output_path)
-    play(audio)
+# Keep model initialization global so it's loaded once per process.
+tts_model = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False, gpu=False)
+
+
+def synthesize_speech(text: str, output_path: Optional[Path] = None) -> Path:
+    """Generate speech audio and return a filesystem path to the WAV file."""
+    output = output_path or AUDIO_DIR / "response.wav"
+    tts_model.tts_to_file(text=text, file_path=str(output))
+    return output

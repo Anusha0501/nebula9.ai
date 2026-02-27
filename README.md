@@ -20,7 +20,7 @@ After watching *The Crown* and witnessing the quiet strength and leadership of Q
 An interactive chatbot that brings a historical figure to life using:
 
 - 📚 **RAG (Retrieval-Augmented Generation)** over real speeches, public letters & Wiki archives
-- 🤖 **Gemini Pro 1.5 Flash** for context-aware, time-constrained LLM generation
+- 🤖 **Gemini 1.5 Flash** for context-aware, time-constrained LLM generation
 - 🗣️ **Coqui TTS (Open Source)** for rich voice synthesis (British female voice)
 - 💻 **Streamlit** frontend for real-time chat with voice output
 
@@ -43,7 +43,7 @@ This project focuses **only** on the early life of Queen Elizabeth II, including
 
 | Component         | Tool / API                        |
 |------------------|-----------------------------------|
-| Language Model    | Gemini Pro 1.5 Flash (Google AI)  |
+| Language Model    | Gemini 1.5 Flash (Google AI)  |
 | Retrieval         | ChromaDB + SentenceTransformers   |
 | Prompting Engine  | LangChain                         |
 | Voice Synthesis   | Coqui TTS (en speaker)            |
@@ -81,7 +81,7 @@ streamlit run app.py
 nebula9ai/
 ├── data/                    # Historical text (e.g., speeches, letters)
 ├── embeddings/              # Chroma vector store
-├── prompting.py             # Persona + context-based prompting logic
+├── prompts.py               # Persona + context-based prompting logic
 ├── rag_pipeline.py          # RAG retrieval pipeline
 ├── tts.py                   # Coqui TTS logic
 ├── app.py                   # Main Streamlit interface
@@ -90,6 +90,15 @@ nebula9ai/
 ```
 
 ---
+
+
+## 🧪 Production Readiness Checklist
+
+- Set `GEMINI_API_KEY` and (optionally) `GEMINI_MODEL` in your deployment environment.
+- Keep `data/*.txt` bundled in the deployed artifact for retrieval to work.
+- Persist `chroma_db/` on disk (or pre-build during image build) to avoid cold-start embedding time.
+- Streamlit Cloud / container deployments should expose only the Streamlit port and disable shell access.
+- Add CI checks (`python -m py_compile app.py rag_pipeline.py tts.py prompts.py`) before deploy.
 
 ## 🧪 Sample Prompts You Can Ask
 
