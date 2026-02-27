@@ -1,53 +1,48 @@
-# app.py
-
 import os
+
+import google.generativeai as genai
 import streamlit as st
 from dotenv import load_dotenv
-from tts import speak_text
-from rag_pipeline import setup_vectorstore, query_db
-import google.generativeai as genai
 
-# 🔐 Load API keys from .env
+from prompts import build_elizabeth_prompt
+from rag_pipeline import query_db, setup_vectorstore
+from tts import synthesize_speech
+
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# 🎯 Initialize LLM (Gemini Pro 1.5 Flash)
-model = genai.GenerativeModel("gemini-pro")
-
-# 🧠 Setup RAG vectorstore
-vectorstore = setup_vectorstore()
-
-# 🗣️ App UI
 st.set_page_config(page_title="Elizabeth Time Machine", page_icon="🕰️")
 st.title("👸🏼 Elizabeth Time Machine")
-st.caption("Travel back in time to talk with Queen Elizabeth I (via AI)")
+st.caption("Travel back in time to talk with Queen Elizabeth II (via AI)")
 
-# 🎤 User input
+api_key = os.getenv("GEMINI_API_KEY")
+model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+
+if not api_key:
+    st.error("GEMINI_API_KEY is not configured. Add it to your environment or .env file.")
+    st.stop()
+
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel(model_name)
+
+
+@st.cache_resource
+def get_vectorstore():
+    return setup_vectorstore()
+
+
+vectorstore = get_vectorstore()
 query = st.text_input("Ask Elizabeth a question", placeholder="What was your childhood like?")
 
 if st.button("Ask"):
-    if query.strip() == "":
+    if not query.strip():
         st.warning("Please enter a question.")
     else:
         with st.spinner("Thinking like a Queen..."):
-            # RAG step
             context = query_db(query, vectorstore)
-
-            # Prompt
-            prompt = f"""
-You are Queen Elizabeth I speaking to a curious visitor from the future.
-Respond in a regal, poetic tone using this context when needed:
-
-Context:
-{context}
-
-User Question:
-{query}
-"""
-            # Generate LLM response
+            prompt = build_elizabeth_prompt(context, query)
             response = model.generate_content(prompt)
             answer = response.text.strip()
 
-            # 🎤 Show + Speak answer
-            st.markdown(f"**Elizabeth:** {answer}")
-            speak_text(answer)
+        st.markdown(f"**Elizabeth:** {answer}")
+        audio_path = synthesize_speech(answer)
+        st.audio(str(audio_path), format="audio/wav")
